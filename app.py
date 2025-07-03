@@ -4,7 +4,7 @@ import google.generativeai as genai
 import os
 
 app = Flask(__name__)
-CORS(app)                                         # <== NEW
+CORS(app, origins=["https://abhee05-c.github.io"])                                      # <== NEW
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
