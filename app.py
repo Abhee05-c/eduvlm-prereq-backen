@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS                      # <== NEW
 import google.generativeai as genai
 import os
 
 app = Flask(__name__)
+CORS(app)                                         # <== NEW
 
-# Set your API key from the environment variable
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
 
@@ -19,13 +20,11 @@ def detect_prereqs():
         return jsonify({"error": "Missing fields in request"}), 400
 
     try:
-        # Step 1: Detect all prerequisite concepts
         prompt1 = f"""Question: {question}
 Correct Answer: {correct}
 List all prerequisite concepts required to solve this question."""
         resp1 = model.generate_content(prompt1)
 
-        # Step 2: Detect missing or misunderstood concepts
         prompt2 = f"""Question: {question}
 Correct Answer: {correct}
 Wrong Answer: {wrong}
@@ -44,5 +43,5 @@ def home():
     return "Gemini Prerequisite Detection API is running!"
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))  # default if PORT not set
+    port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port, debug=True)
